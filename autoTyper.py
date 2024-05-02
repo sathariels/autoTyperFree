@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import font
 import pyautogui
 import time
+import threading
 def create_gui():
     # Created the main window
     root = Tk()
@@ -30,12 +31,12 @@ def convert():
     textToType = str(textBox.get())
     wpm = float(wpm_entry.get())
     intervals = float(14.20*(wpm**-1.15))
-    updateButton()
-    autoTyper(textToType, intervals)  # Call autoTyper with the converted values
+    updateButton()# put is here in order to fire the update
+    threading.Thread(target = autoTyper, args = (textToType, intervals)).start()  # Call autoTyper with the converted values
 
-
-def updateButton()  :
+def updateButton():
     startButton.config(text="Stop Typing", command = root.quit)
+# Changes the button from Start typing to Stop typing and when pressed quits the program
 def autoTyper(textToType, intervals):
     time.sleep(3)
     pyautogui.write(textToType, interval= intervals)
