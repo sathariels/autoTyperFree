@@ -30,13 +30,16 @@ def convert():
     textToType = str(textBox.get())
     wpm = float(wpm_entry.get())
     intervals = float(14.20*(wpm**-1.15))
-
+    updateButton()
     autoTyper(textToType, intervals)  # Call autoTyper with the converted values
 
+
+def updateButton()  :
+    startButton.config(text="Stop Typing", command = root.quit)
 def autoTyper(textToType, intervals):
     time.sleep(3)
     pyautogui.write(textToType, interval= intervals)
-    exit()
+
 
 
 
