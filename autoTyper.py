@@ -34,6 +34,8 @@ def convert():
     except ValueError:
         errorLabel = Label(root, text = "Please input a number in the WPM box")
         errorLabel.pack()
+        errorLabel.after(5000, errorLabel.destroy )
+
     intervals = float(14.20*(wpm**-1.15))
     updateButton()# put is here in order to fire the update
     threading.Thread(target = autoTyper, args = (textToType, intervals)).start()  # Call autoTyper with the converted values
