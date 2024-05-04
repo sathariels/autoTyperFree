@@ -29,7 +29,11 @@ def create_gui():
 def convert():
     # Get the values from the entry boxes and convert them to strings and integers
     textToType = str(textBox.get())
-    wpm = float(wpm_entry.get())
+    try:
+        wpm = float(wpm_entry.get())
+    except ValueError:
+        errorLabel = Label(root, text = "Please input a number in the WPM box")
+        errorLabel.pack()
     intervals = float(14.20*(wpm**-1.15))
     updateButton()# put is here in order to fire the update
     threading.Thread(target = autoTyper, args = (textToType, intervals)).start()  # Call autoTyper with the converted values
