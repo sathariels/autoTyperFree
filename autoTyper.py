@@ -35,7 +35,12 @@ def convert():
     threading.Thread(target = autoTyper, args = (textToType, intervals)).start()  # Call autoTyper with the converted values
 
 def updateButton():
-    startButton.config(text="Stop Typing", command = root.quit)
+    if startButton.cget("text") == "Start Typing":
+        startButton.config(text="Stop Typing", command = root.quit)
+    else:
+        startButton.config(text="Start Typing", command=convert)
+
+
 # Changes the button from Start typing to Stop typing and when pressed quits the program
 def autoTyper(textToType, intervals):
     time.sleep(3)
