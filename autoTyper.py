@@ -36,11 +36,12 @@ def convert():
 
 def updateButton():
     if startButton.cget("text") == "Start Typing":
-        startButton.config(text="Stop Typing", command = root.quit)
-    else:
+        startButton.config(text="Stop Typing", command =lambda:[stopTyping(), updateButton()])
+    elif startButton.cget("text") == "Stop Typing":
         startButton.config(text="Start Typing", command=convert)
 
-
+def stopTyping():
+    pyautogui.moveTo(0, 0)
 # Changes the button from Start typing to Stop typing and when pressed quits the program
 def autoTyper(textToType, intervals):
     time.sleep(3)
