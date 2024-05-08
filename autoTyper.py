@@ -53,6 +53,10 @@ def create_gui():
 
 def convert():
     textToType = str(textBox.get("1.0",'end-1c'))
+        if textToType == "":
+            textToTypeLabel = Label(root, text="Enter text to type")
+            textToTypeLabel.pack()
+            textToTypeLabel.after(5000, textToTypeLabel.destroy)
     try:
         wpm = float(wpm_entry.get())
     except ValueError:
