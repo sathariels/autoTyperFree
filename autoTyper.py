@@ -53,6 +53,10 @@ def create_gui():
 
 def convert():
     textToType = str(textBox.get("1.0",'end-1c'))
+    if textToType == "":
+        textToTypeLabel = Label(root, text="Enter text to type")
+        textToTypeLabel.pack()
+        textToTypeLabel.after(5000, textToTypeLabel.destroy)
     try:
         wpm = float(wpm_entry.get())
     except ValueError:
@@ -79,6 +83,7 @@ def stopTyping():
 def autoTyper(textToType, intervals):
     time.sleep(3)
     pyautogui.write(textToType, interval=intervals)
+    updateButton()
 
 
 root, textBox, wpm_entry = create_gui()
