@@ -3,6 +3,8 @@ from tkinter import font
 import pyautogui
 import time
 import threading
+import string
+import random
 
 
 class ExpandoText(Text):
@@ -60,14 +62,14 @@ def convert():
     try:
         wpm = float(wpm_entry.get())
     except ValueError:
-        errorLabel = Label(root, text="Please input a number in the WPM box")
+        errlorLabel = Label(root, text="Please input a number in the WPM box")
         errorLabel.pack()
         errorLabel.after(5000, errorLabel.destroy)
 
     intervals = float(14.20 * (wpm ** -1.15))
     updateButton()
     threading.Thread(target=autoTyper, args=(textToType, intervals)).start()
-
+    threading.Thread(target=chooseLetter()).start()
 
 def updateButton():
     if startButton.cget("text") == "Start Typing":
@@ -84,6 +86,13 @@ def autoTyper(textToType, intervals):
     time.sleep(3)
     pyautogui.write(textToType, interval=intervals)
     updateButton()
+    stopTyping()
+
+def chooseLetter():
+    listOfLetter = list(string.ascii_lowercase)
+    randomLetter = random.choice(listOfLetter)
+    pyautogui.write(randomLetter)
+    threading.Timer(2, chooseLetter).start()
 
 
 root, textBox, wpm_entry = create_gui()
