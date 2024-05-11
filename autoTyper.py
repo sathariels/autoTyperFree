@@ -88,7 +88,6 @@ def autoTyper(textToType, intervals):
     pyautogui.write(textToType, interval=intervals)
     updateButton()
 def chooseLetter(mistakes = 5):
-
     i = 0
     while i <= mistakes:
         listOfLetter = list(string.ascii_lowercase)
