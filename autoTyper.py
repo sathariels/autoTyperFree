@@ -62,7 +62,7 @@ def convert():
     try:
         wpm = float(wpm_entry.get())
     except ValueError:
-        errlorLabel = Label(root, text="Please input a number in the WPM box")
+        errorLabel = Label(root, text="Please input a number in the WPM box")
         errorLabel.pack()
         errorLabel.after(5000, errorLabel.destroy)
 
