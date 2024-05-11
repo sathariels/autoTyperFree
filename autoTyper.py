@@ -84,12 +84,14 @@ def convert():
         errorLabel = Label(root, text="Please input a number in the mistakes box")
         errorLabel.pack()
         errorLabel.after(5000, errorLabel.destroy)
+        stopTyping()
     try:
         frequencies = int(frequenciesEntry.get())
     except ValueError:
         errorLabel = Label(root, text="Please input a number in the frequency box")
         errorLabel.pack()
         errorLabel.after(5000, errorLabel.destroy)
+        stopTyping()
 
 
     intervals = float(14.20 * (wpm ** -1.15))
