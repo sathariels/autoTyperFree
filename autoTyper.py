@@ -20,7 +20,7 @@ class ExpandoText(Text):
     def resetHeight(self):
         height = self.tk.call((self._w, "count", "-update", "-displaylines", "1.0", "end"))
         # self.tk.call(()) asks the systerm about the hieghg of out text widget.
-        # seld._w refers to the internal name of the text widget
+        # self._w refers to the internal name of the text widget
         # count -update -displaylines 1.0 end asks the system to count the number of lines in the text widget
         # 1.0 refers to the first line of the text widget
         # end refers to the last line of the text widget
@@ -49,7 +49,21 @@ def create_gui():
     wpm_entry = Entry(root, width=10)
     wpm_entry.pack()
 
-    return root, textBox, wpm_entry
+    textLabel3 = Label(root, text="Enter Mistakes")
+    textLabel3.pack()
+    textLabel3.configure(font=fontTuple)
+
+    mistakesEntry = Entry(root, width=10)
+    mistakesEntry.pack()
+
+    textLabel4 = Label(root, text="Enter Frequency(s)")
+    textLabel4.pack()
+    textLabel4.configure(font=fontTuple)
+
+    frequenciesEntry = Entry(root, width=10)
+    frequenciesEntry.pack()
+
+    return root, textBox, wpm_entry, mistakesEntry, frequenciesEntry
 
 
 def convert():
@@ -64,12 +78,25 @@ def convert():
         errorLabel = Label(root, text="Please input a number in the WPM box")
         errorLabel.pack()
         errorLabel.after(5000, errorLabel.destroy)
+    try:
+        mistakes = int(mistakesEntry.get())
+    except ValueError:
+        errorLabel = Label(root, text="Please input a number in the mistakes box")
+        errorLabel.pack()
+        errorLabel.after(5000, errorLabel.destroy)
+    try:
+        frequencies = int(frequenciesEntry.get())
+    except ValueError:
+        errorLabel = Label(root, text="Please input a number in the frequency box")
+        errorLabel.pack()
+        errorLabel.after(5000, errorLabel.destroy)
+
 
     intervals = float(14.20 * (wpm ** -1.15))
     updateButton()
     threading.Thread(target=autoTyper, args=(textToType, intervals)).start()
     time.sleep(3)
-    threading.Thread(target=chooseLetter).start()
+    threading.Thread(target=chooseLetter, args= (mistakes, frequencies)).start()
 
 
 def updateButton():
@@ -87,7 +114,7 @@ def autoTyper(textToType, intervals):
     time.sleep(3)
     pyautogui.write(textToType, interval=intervals)
     updateButton()
-def chooseLetter(mistakes = 5):
+def chooseLetter(mistakes, frequencies):
     i = 0
     while i <= mistakes:
         listOfLetter = list(string.ascii_lowercase)
@@ -96,12 +123,12 @@ def chooseLetter(mistakes = 5):
         i += 1
         time.sleep(.7)
         if i  == mistakes:
-            mistakeEveryXSecond()
+            mistakeEveryXSecond(mistakes, frequencies)
 
-def mistakeEveryXSecond():
-    threading.Timer(8, chooseLetter).start()
+def mistakeEveryXSecond(mistakes, frequencies):
+    threading.Timer(frequencies, lambda: chooseLetter(mistakes, frequencies)).start()
 
-root, textBox, wpm_entry = create_gui()
+root, textBox, wpm_entry, mistakesEntry, frequenciesEntry = create_gui()
 
 startButton = Button(root, text="Start Typing", command=convert)
 startButton.pack()
