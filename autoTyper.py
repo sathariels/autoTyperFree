@@ -117,7 +117,7 @@ def updateButton():
 
 def stopTyping():
     pyautogui.moveTo(0, 0)
-
+    
 
 
 def autoTyper(textToType, intervals):
