@@ -36,8 +36,3 @@ This is a simple Python GUI application built using Tkinter for automating text 
 - **License**: MIT License
 """
 
-# Write README content to a file
-with open("README.md", "w") as readme_file:
-    readme_file.write(README_CONTENT)
-
-print("README.md file created successfully!")
