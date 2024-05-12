@@ -63,6 +63,13 @@ def create_gui():
     frequenciesEntry = Entry(root, width=10)
     frequenciesEntry.pack()
 
+
+
+
+    authorLabel = Label(root, text="Project by Sathariel", font=("Times", 12))
+    authorLabel.pack()
+
+
     return root, textBox, wpm_entry, mistakesEntry, frequenciesEntry
 
 
@@ -99,7 +106,7 @@ def convert():
     threading.Thread(target=autoTyper, args=(textToType, intervals)).start()
     time.sleep(3)
     threading.Thread(target=chooseLetter, args= (mistakes, frequencies)).start()
-
+root, textBox, wpm_entry, mistakesEntry, frequenciesEntry = create_gui()
 
 def updateButton():
     if startButton.cget("text") == "Start Typing":
@@ -110,6 +117,7 @@ def updateButton():
 
 def stopTyping():
     pyautogui.moveTo(0, 0)
+
 
 
 def autoTyper(textToType, intervals):
@@ -123,14 +131,14 @@ def chooseLetter(mistakes, frequencies):
         randomLetter = random.choice(listOfLetter)
         pyautogui.write(randomLetter)
         i += 1
-        time.sleep(.7)
+        time.sleep(.9)
         if i  == mistakes:
             mistakeEveryXSecond(mistakes, frequencies)
 
 def mistakeEveryXSecond(mistakes, frequencies):
     threading.Timer(frequencies, lambda: chooseLetter(mistakes, frequencies)).start()
 
-root, textBox, wpm_entry, mistakesEntry, frequenciesEntry = create_gui()
+
 
 startButton = Button(root, text="Start Typing", command=convert)
 startButton.pack()
