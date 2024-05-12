@@ -124,6 +124,7 @@ def autoTyper(textToType, intervals):
     time.sleep(3)
     pyautogui.write(textToType, interval=intervals)
     updateButton()
+    stopTyping()
 def chooseLetter(mistakes, frequencies):
     i = 0
     while i <= mistakes:
