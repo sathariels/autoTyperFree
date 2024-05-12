@@ -104,7 +104,7 @@ def convert():
     intervals = float(14.20 * (wpm ** -1.15))
     updateButton()
     threading.Thread(target=autoTyper, args=(textToType, intervals)).start()
-    time.sleep(3)
+    time.sleep(frequencies)
     threading.Thread(target=chooseLetter, args= (mistakes, frequencies)).start()
 root, textBox, wpm_entry, mistakesEntry, frequenciesEntry = create_gui()
 
@@ -117,7 +117,7 @@ def updateButton():
 
 def stopTyping():
     pyautogui.moveTo(0, 0)
-    
+
 
 
 def autoTyper(textToType, intervals):
@@ -136,7 +136,7 @@ def chooseLetter(mistakes, frequencies):
             mistakeEveryXSecond(mistakes, frequencies)
 
 def mistakeEveryXSecond(mistakes, frequencies):
-    threading.Timer(frequencies, lambda: chooseLetter(mistakes, frequencies)).start()
+    threading.Timer(frequencies, chooseLetter, args= (mistakes, frequencies)).start()
 
 
 
