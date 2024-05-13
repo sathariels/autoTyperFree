@@ -21,7 +21,7 @@ This is a simple Python GUI application built using Tkinter for automating text 
 
 ## Requirements:
 
-- Python 3.x
+- Python 3.9
 - Tkinter
 - pyautogui
 - time
