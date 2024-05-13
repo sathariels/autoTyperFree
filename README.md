@@ -1,4 +1,4 @@
-README_CONTENT = """
+
 # Auto Typer GUI
 
 This is a simple Python GUI application built using Tkinter for automating text typing. The application allows users to input text to be typed, set the typing speed (in words per minute), introduce intentional mistakes, and control the frequency of those mistakes.
