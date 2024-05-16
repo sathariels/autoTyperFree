@@ -5,7 +5,10 @@ import time
 import threading
 import string
 import random
-
+randomInt = random.randint(50,70)
+pauseDuration = random.uniform(4, 10)
+isPaused = False
+lock = threading.Lock()
 class ExpandoText(Text):
     def insert(self, *args, **kwargs):  # This method is responsible for inserting text into the widget whenever the
         # user types something.
@@ -105,7 +108,7 @@ def convert():
     updateButton()
     threading.Thread(target=autoTyper, args=(textToType, intervals)).start()
     time.sleep(frequencies)
-    threading.Thread(target=chooseLetter, args= (mistakes, frequencies)).start()
+    threading.Thread(target=chooseLetter, args= (mistakes, frequencies, lock)).start()
 root, textBox, wpm_entry, mistakesEntry, frequenciesEntry = create_gui()
 
 def updateButton():
@@ -120,24 +123,42 @@ def stopTyping():
 
 
 
+
 def autoTyper(textToType, intervals):
+    global isPaused
     time.sleep(3)
-    pyautogui.write(textToType, interval=intervals)
+    counter = 0
+    for char in textToType:
+        pyautogui.write(char, interval=intervals)
+        counter += 1
+        if counter % randomInt == 0:
+            with lock:
+                isPaused = True  # Indicate that autoTyper is paused
+                time.sleep(pauseDuration)
+                isPaused = False  # Indicate that autoTyper has resumed
+                counter = 0
+
     updateButton()
     stopTyping()
-def chooseLetter(mistakes, frequencies):
+
+def chooseLetter(mistakes, frequencies, lock):
+    global isPaused
     i = 0
     while i <= mistakes:
-        listOfLetter = list(string.ascii_lowercase)
-        randomLetter = random.choice(listOfLetter)
-        pyautogui.write(randomLetter)
-        i += 1
-        time.sleep(.9)
-        if i  == mistakes:
-            mistakeEveryXSecond(mistakes, frequencies)
+        with lock:
+            if isPaused:  # If autoTyper is paused, pause chooseLetter as well
+                time.sleep(pauseDuration)
+            listOfLetter = list(string.ascii_lowercase)
+            randomLetter = random.choice(listOfLetter)
+            pyautogui.write(randomLetter)
+            i += 1
+            time.sleep(.9)
+            if i == mistakes:
+                mistakeEveryXSecond(mistakes, frequencies, lock)
 
-def mistakeEveryXSecond(mistakes, frequencies):
-    threading.Timer(frequencies, chooseLetter, args= (mistakes, frequencies)).start()
+def mistakeEveryXSecond(mistakes, frequencies, lock):
+    threading.Timer(frequencies + pauseDuration, chooseLetter, args=(mistakes, frequencies, lock)).start()
+    print("Waiting for")
 
 
 
