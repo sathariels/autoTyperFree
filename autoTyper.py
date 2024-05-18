@@ -157,7 +157,7 @@ def chooseLetter(mistakes, frequencies, lock):
                 mistakeEveryXSecond(mistakes, frequencies, lock)
 
 def mistakeEveryXSecond(mistakes, frequencies, lock):
-    threading.Timer(frequencies + pauseDuration, chooseLetter, args=(mistakes, frequencies, lock)).start()
+    threading.Timer(frequencies + 2*pauseDuration, chooseLetter, args=(mistakes, frequencies, lock)).start()
     print("Waiting for")
 
 
