@@ -7,8 +7,9 @@ import string
 import random
 randomInt = random.randint(50,70)
 pauseDuration = random.uniform(4, 10)
-isPaused = False
-lock = threading.Lock()
+isPaused = False # Both functions need to pause and resume together to maintain consistent behavior. The flag communicates the pause state to both functions.
+# The flag provides a simple mechanism to control the flow of the functions based on whether a pause is required.
+lock = threading.Lock() # used in order to surcumvent teh race condition wheere both chooseLEtter and autoTyper are using the same shared data lock prevents them from doing so and thuse allows it to work
 class ExpandoText(Text):
     def insert(self, *args, **kwargs):  # This method is responsible for inserting text into the widget whenever the
         # user types something.
@@ -34,44 +35,61 @@ def create_gui():
     # Created the main window
     root = Tk()
     root.title("Auto Typer")
+    root.configure(bg="#000000")  # Set background color for the main window
 
-    # Created the text box using ExpandoText
-    textLabel = Label(root, text="Enter text to type:")
-    textLabel.pack()
-    fontTuple = ("Comic Sans MS", 20, "bold")
-    textLabel.configure(font=fontTuple)
-    textBox = ExpandoText(root, width=50)
-    textBox.pack()
+    # Define color scheme
+    bg_color = "#000000"  # Black background
+    frame_bg_color = "#333333"  # Dark gray for frames
+    label_color = "#ffffff"  # White text for labels
+    entry_bg_color = "#666666"  # Medium gray for entry backgrounds
+    font_tuple = ("Arial", 14)
+    label_font_tuple = ("Arial", 12, "bold")
+    author_font_tuple = ("Arial", 10, "italic")
 
-    # Created the label that says WPM, used pack for formatting
-    textLabel2 = Label(root, text="Enter WPM")
-    textLabel2.pack()
-    textLabel2.configure(font=fontTuple)
+    # Frame for Text Input
+    text_frame = Frame(root, bg=frame_bg_color, bd=2, relief="groove", padx=10, pady=10)
+    text_frame.pack(pady=10, padx=10, fill='x')
 
-    # Created the entry box for the user to enter the WPM, and stored it in the variable wpm_entry
-    wpm_entry = Entry(root, width=10)
-    wpm_entry.pack()
+    textLabel = Label(text_frame, text="Enter text to type:", font=label_font_tuple, bg=frame_bg_color, fg=label_color)
+    textLabel.grid(row=0, column=0, sticky='w')
 
-    textLabel3 = Label(root, text="Enter Mistakes")
-    textLabel3.pack()
-    textLabel3.configure(font=fontTuple)
+    textBox = ExpandoText(text_frame, width=50, height=10, bg=entry_bg_color, fg=label_color)
+    textBox.grid(row=1, column=0, pady=5)
 
-    mistakesEntry = Entry(root, width=10)
-    mistakesEntry.pack()
+    # Frame for WPM Input
+    wpm_frame = Frame(root, bg=frame_bg_color, bd=2, relief="groove", padx=10, pady=10)
+    wpm_frame.pack(pady=10, padx=10, fill='x')
 
-    textLabel4 = Label(root, text="Enter Frequency(s)")
-    textLabel4.pack()
-    textLabel4.configure(font=fontTuple)
+    textLabel2 = Label(wpm_frame, text="Enter WPM:", font=label_font_tuple, bg=frame_bg_color, fg=label_color)
+    textLabel2.grid(row=0, column=0, sticky='w')
 
-    frequenciesEntry = Entry(root, width=10)
-    frequenciesEntry.pack()
+    wpm_entry = Entry(wpm_frame, width=10, bg=entry_bg_color, fg=label_color)
+    wpm_entry.grid(row=0, column=1, padx=5)
 
+    # Frame for Mistakes Input
+    mistakes_frame = Frame(root, bg=frame_bg_color, bd=2, relief="groove", padx=10, pady=10)
+    mistakes_frame.pack(pady=10, padx=10, fill='x')
 
+    textLabel3 = Label(mistakes_frame, text="Enter Mistakes:", font=label_font_tuple, bg=frame_bg_color, fg=label_color)
+    textLabel3.grid(row=0, column=0, sticky='w')
 
+    mistakesEntry = Entry(mistakes_frame, width=10, bg=entry_bg_color, fg=label_color)
+    mistakesEntry.grid(row=0, column=1, padx=5)
 
-    authorLabel = Label(root, text="Project by Sathariel", font=("Times", 12))
-    authorLabel.pack()
+    # Frame for Frequency Input
+    frequency_frame = Frame(root, bg=frame_bg_color, bd=2, relief="groove", padx=10, pady=10)
+    frequency_frame.pack(pady=10, padx=10, fill='x')
 
+    textLabel4 = Label(frequency_frame, text="Enter Frequency (s):", font=label_font_tuple, bg=frame_bg_color,
+                       fg=label_color)
+    textLabel4.grid(row=0, column=0, sticky='w')
+
+    frequenciesEntry = Entry(frequency_frame, width=10, bg=entry_bg_color, fg=label_color)
+    frequenciesEntry.grid(row=0, column=1, padx=5)
+
+    # Author Label
+    authorLabel = Label(root, text="Project by Sathariel", font=author_font_tuple, bg=bg_color, fg=label_color)
+    authorLabel.pack(pady=20)
 
     return root, textBox, wpm_entry, mistakesEntry, frequenciesEntry
 
@@ -125,7 +143,7 @@ def stopTyping():
 
 
 def autoTyper(textToType, intervals):
-    global isPaused
+    global isPaused # have to use both lock and flag because if we were ot just use flag then autoTYper and chooseFlag will acesss the isPuased fucntion resulatin gin the race conditon. Also the state of the lock may change thus causing a rce codniton. 
     time.sleep(3)
     counter = 0
     for char in textToType:
@@ -134,7 +152,7 @@ def autoTyper(textToType, intervals):
         if counter % randomInt == 0:
             with lock:
                 isPaused = True  # Indicate that autoTyper is paused
-                time.sleep(pauseDuration)
+                time.sleep(pauseDuration) #Simulate a pause in typing
                 isPaused = False  # Indicate that autoTyper has resumed
                 counter = 0
 
@@ -145,7 +163,7 @@ def chooseLetter(mistakes, frequencies, lock):
     global isPaused
     i = 0
     while i <= mistakes:
-        with lock:
+        with lock: # acquire lock to check is the isPaused flag
             if isPaused:  # If autoTyper is paused, pause chooseLetter as well
                 time.sleep(pauseDuration)
             listOfLetter = list(string.ascii_lowercase)
