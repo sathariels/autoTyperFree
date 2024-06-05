@@ -165,7 +165,7 @@ def chooseLetter(mistakes, frequencies, lock):
     while i <= mistakes:
         with lock: # acquire lock to check is the isPaused flag
             if isPaused:  # If autoTyper is paused, pause chooseLetter as well
-                time.sleep(pauseDuration)
+            time.sleep(pauseDuration)
             listOfLetter = list(string.ascii_lowercase)
             randomLetter = random.choice(listOfLetter)
             pyautogui.write(randomLetter)
